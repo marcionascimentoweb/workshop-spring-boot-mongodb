@@ -21,12 +21,17 @@ public class UserService  {
 		return repo.findAll();
 	}
 	
-	public User findById(String id){
+	public User findById2(String id){
 		Optional<User> user = repo.findById(id);
 		if(user == null) {
 			throw new ObjectNotFoundException("Objeto não encontrado");
 		}
 		return user.get();
+	}
+	
+	public User findById(String id) {
+		Optional<User> obj = repo.findById(id);
+		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
 	}
 	
 	public User insert(User obj) {
@@ -38,11 +43,41 @@ public class UserService  {
 		repo.deleteById(id);
 	}
 	
+	
+
 	public User update(User obj) {
-		Optional<newObj> = repo.findById(id);
+		User newObj = findById(obj.getId());
 		updateData(newObj, obj);
 		return repo.save(newObj);
 	}
+	
+	private void updateData(User newObj, User obj) {
+		newObj.setName(obj.getName());
+		newObj.setEmail(obj.getEmail());
+	}
+	
+	
+	
+	
+	/*
+	public User update(String id){
+		Optional<User> user = repo.findById(id);
+		if(user == null) {
+			throw new ObjectNotFoundException("Objeto não encontrado");
+		}
+		update(newObj, id);
+		return repo.save(newObj)
+	}
+	*/
+	/*
+	public User update(User obj, String id) {
+		User newObj = repo.findById(id).orElse(null); 
+		update(newObj, id);
+		return repo.save(newObj);
+	}
+	*/
+	
+
 	
 	/*
 	 * public User update(User obj) {
@@ -52,10 +87,7 @@ public class UserService  {
 	}
 	 */
 	
-	private void updateData(User newObj, User obj) {
-		newObj.setName(obj.getName());
-		newObj.setEmail(obj.getEmail());
-	}
+
 
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getName(), objDto.getEmail());
